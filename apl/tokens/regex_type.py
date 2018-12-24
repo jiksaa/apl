@@ -1,0 +1,6 @@
+"""
+TOKEN REGEX TYPE
+"""
+SINGLE_CHAR = 1
+PATTERN = 2
+SKIP = 3
