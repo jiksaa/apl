@@ -6,7 +6,7 @@ from apl.interpreter.interpreter import Interpreter
 def main():
     while True:
         try:
-            text = input('spi> ')
+            text = input('apl> ')
         except EOFError:
             break
         if not text:

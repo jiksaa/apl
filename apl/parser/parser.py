@@ -35,6 +35,8 @@ class Parser:
             expr_node = self.expr()
             self.consume(token_type.CLOSING_PAR)
             return expr_node
+        else:
+            self.error(token_type.NUMBER)
 
     def term(self):
         """
@@ -71,4 +73,7 @@ class Parser:
         return node
 
     def parse(self):
-        return self.expr()
+        expr = self.expr()
+        if self.current_token.typename != token_type.EOF:
+            self.error(token_type.EOF)
+        return expr

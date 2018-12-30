@@ -103,7 +103,7 @@ class Lexer:
         :return: Next Token from string
         """
         if self.index == len(self.text):
-            return Token(token_type.EOF, '\0')
+            return Token(token_type.EOF, '')
         for f in self.matching_func_list:
             consumed, token = f(self.text, self.index)
             if consumed > 0:
