@@ -59,6 +59,11 @@ def is_pattern_token(typename, pattern, input_str, current):
 
 
 def get_matching_func_list():
+    """
+    Build token detection function list based on apl.tokens module
+
+    :return: List of token matching lambda functions
+    """
     func_list = []
     for typename, match_type, regex in tokens.TOKEN_REGEX:
         if match_type == regex_type.SKIP:
@@ -94,6 +99,11 @@ class Lexer:
         self.matching_func_list = get_matching_func_list()
 
     def error(self):
+        """
+        Raise token matching error
+
+        :return: None
+        """
         raise TokenMatchingError('No matching token at index %s' % self.index)
 
     def get_next_token(self):
@@ -144,6 +154,8 @@ class Lexer:
             error_messages.append("No matching token @ index:" + str(index))
             error_messages.append("\t" + input_str)
             error_messages.append("\t" + index * " " + "^")
+        else:
+            token_list.append(tokens.Token(token_type.EOF, ''))
         return token_list, error_messages
 
 

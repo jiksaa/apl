@@ -14,15 +14,17 @@ TOKEN_REGEX = [
     (token_type.MULT, regex.SINGLE_CHAR, '*'),
     (token_type.DIV, regex.SINGLE_CHAR, '/'),
     (token_type.EQUAL, regex.SINGLE_CHAR, '='),
+    (token_type.TERMINATOR, regex.SINGLE_CHAR, ';'),
+    (token_type.WORD_VAR, regex.PATTERN, 'var'),
     (token_type.NUMBER, regex.PATTERN, '[0-9]+(\.[0-9]+)?'),
     (token_type.IDENTIFIER, regex.PATTERN, '_*[a-zA-Z0-9]*'),
-    (token_type.STRING, regex.PATTERN, '\".*\"')
+    (token_type.STRING, regex.PATTERN, '\".*\"'),
 ]
 
 
 class Token:
     """
-    Represent an token identified by a lexer
+    Represent a token identified by a lexer
     """
     typename = str()
     value = str()

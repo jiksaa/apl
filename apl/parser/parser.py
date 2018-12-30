@@ -22,7 +22,7 @@ class Parser:
 
     def factor(self):
         """
-        factor := NUMBER | OPEN_PAR expr CLOSING_PAR
+        factor := NUMBER | OPEN_PAR expr CLOSING_PAR | IDENTIFIER
 
         :return: factor AST Node
         """
@@ -35,6 +35,9 @@ class Parser:
             expr_node = self.expr()
             self.consume(token_type.CLOSING_PAR)
             return expr_node
+        elif token.typename == token_type.IDENTIFIER:
+            self.consume(token_type.IDENTIFIER)
+            return ast.VarEval(token)
         else:
             self.error(token_type.NUMBER)
 
@@ -72,8 +75,64 @@ class Parser:
             node = ast.BinaryOperator(operator=operator_token, left=node, right=self.term())
         return node
 
+    def right_op(self):
+        """
+        right_op := expr
+
+        :return:
+        """
+        return self.expr()
+
+    def left_op(self):
+        """
+        left_op := (VAR)? IDENTIFIER
+
+        :return:
+        """
+        if self.current_token.typename == token_type.WORD_VAR:
+            self.consume(token_type.WORD_VAR)
+            var_name_token = self.current_token
+            self.consume(token_type.IDENTIFIER)
+            return ast.VarInit(var_name_token)
+        else:
+            var_name_token = self.current_token
+            self.consume(token_type.IDENTIFIER)
+            return ast.Var(var_name_token)
+
+    def assign(self):
+        """
+        assign := left_op EQUAL right_op
+
+        :return:
+        """
+        left_op = self.left_op()
+        self.consume(token_type.EQUAL)
+        right_opt = self.right_op()
+        return ast.Assignation(left_op, right_opt)
+
+    def instruction(self):
+        """
+        instruction := (assign | [future instruction type]) TERMINATOR
+
+        :return:
+        """
+        instruction = self.assign()
+        self.consume(token_type.TERMINATOR)
+        return instruction
+
+    def program(self):
+        """
+        program := (instruction)*
+
+        :return:
+        """
+        instructions = []
+        while self.current_token.typename != token_type.EOF:
+            instructions.append(self.instruction())
+        return ast.Program(instructions)
+
     def parse(self):
-        expr = self.expr()
+        tree = self.program()
         if self.current_token.typename != token_type.EOF:
             self.error(token_type.EOF)
-        return expr
+        return tree
