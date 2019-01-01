@@ -1,3 +1,6 @@
+import re
+
+
 class AST:
     pass
 
@@ -44,24 +47,27 @@ class Assignation(Instruction):
 
 class Var(AST):
     def __init__(self, token):
-        self.token = self.var_name = token
+        self.token = token
+        self.var_name = token.value
 
     def __str__(self):
-        return 'ast.var<%s>' % self.var_name.value
+        return 'ast.var<%s>' % self.var_name
 
 
 class VarInit(Var):
     def __str__(self):
-        return 'ast.var.init<%s>' % self.var_name.value
+        return 'ast.var.init<%s>' % self.var_name
+
 
 class VarEval(Var):
     def __str__(self):
-        return 'ast.var.eval<%s>' % self.var_name.value
+        return 'ast.var.eval<%s>' % self.var_name
 
 
 class ASTNodeVisitor:
     def visit(self, node):
-        method_name = 'visit_%s' % type(node).__name__
+        camel_case_split = re.sub('(?!^)([A-Z][a-z]+)', r' \1', type(node).__name__).split()
+        method_name = 'visit_%s' % '_'.join(camel_case_split).lower()
         visitor = getattr(self, method_name, self.default_visit)
         return visitor(node)
 

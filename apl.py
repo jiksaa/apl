@@ -19,6 +19,7 @@ def main():
             apl_parser = Parser(apl_lexer)
             apt_interpreter = Interpreter(apl_parser)
             result = apt_interpreter.interpret()
+            print(apt_interpreter.symbol_table)
             print(result)
         except TokenMatchingError as tk_match_err:
             print(tk_match_err)
