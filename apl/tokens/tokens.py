@@ -1,24 +1,24 @@
-from . import regex_type as regex
-from . import token_type
+from apl.tokens import regex
+from apl.tokens import types
 
 """
 TOKEN REGULAR EXPRESSIONS
 """
 TOKEN_REGEX = [
-    (token_type.SPACE, regex.SKIP, ' '),
-    (token_type.TAB, regex.SKIP, '\t'),
-    (token_type.OPEN_PAR, regex.SINGLE_CHAR, '('),
-    (token_type.CLOSING_PAR, regex.SINGLE_CHAR, ')'),
-    (token_type.PLUS, regex.SINGLE_CHAR, '+'),
-    (token_type.MINUS, regex.SINGLE_CHAR, '-'),
-    (token_type.MULT, regex.SINGLE_CHAR, '*'),
-    (token_type.DIV, regex.SINGLE_CHAR, '/'),
-    (token_type.EQUAL, regex.SINGLE_CHAR, '='),
-    (token_type.TERMINATOR, regex.SINGLE_CHAR, ';'),
-    (token_type.WORD_VAR, regex.PATTERN, 'var'),
-    (token_type.NUMBER, regex.PATTERN, '[0-9]+(\.[0-9]+)?'),
-    (token_type.IDENTIFIER, regex.PATTERN, '[a-zA-Z0-9_]*'),
-    (token_type.STRING, regex.PATTERN, '\".*\"'),
+    (types.SPACE, regex.SKIP, ' '),
+    (types.TAB, regex.SKIP, '\t'),
+    (types.OPEN_PAR, regex.SINGLE_CHAR, '('),
+    (types.CLOSING_PAR, regex.SINGLE_CHAR, ')'),
+    (types.PLUS, regex.SINGLE_CHAR, '+'),
+    (types.MINUS, regex.SINGLE_CHAR, '-'),
+    (types.MULT, regex.SINGLE_CHAR, '*'),
+    (types.DIV, regex.SINGLE_CHAR, '/'),
+    (types.EQUAL, regex.SINGLE_CHAR, '='),
+    (types.TERMINATOR, regex.SINGLE_CHAR, ';'),
+    (types.WORD_VAR, regex.PATTERN, 'var'),
+    (types.NUMBER, regex.PATTERN, '[0-9]+(\.[0-9]+)?'),
+    (types.IDENTIFIER, regex.PATTERN, '[a-zA-Z0-9_]*'),
+    (types.STRING, regex.PATTERN, '\".*\"'),
 ]
 
 

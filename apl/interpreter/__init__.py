@@ -1,1 +1,2 @@
-from . import interpreter
+from .interpreter import Interpreter
+from . import exceptions

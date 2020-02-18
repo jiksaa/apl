@@ -1,2 +1,2 @@
-from . import ast
-from . import parser
+from .parser import Parser
+from . import exceptions

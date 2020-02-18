@@ -3,10 +3,12 @@ Language lexer definition
 """
 import re
 
-from apl.tokens import token_type
-from apl.tokens import regex_type
-from apl.tokens import tokens
-from apl.tokens.tokens import Token
+from apl.tokens import types
+from apl.tokens import regex
+from apl.tokens import Token
+from apl.tokens import TOKEN_REGEX
+
+from apl.lexer.exceptions import TokenMatchingError
 
 
 def is_skip_char(char, input_str, current):
@@ -65,18 +67,14 @@ def get_matching_func_list():
     :return: List of token matching lambda functions
     """
     func_list = []
-    for typename, match_type, regex in tokens.TOKEN_REGEX:
-        if match_type == regex_type.SKIP:
-            func_list.append(lambda s, c, r=regex: is_skip_char(r, s, c))
-        elif match_type == regex_type.SINGLE_CHAR:
-            func_list.append(lambda s, c, r=regex, t=typename: is_single_char_token(t, r, s, c))
-        elif match_type == regex_type.PATTERN:
-            func_list.append(lambda s, c, r=regex, t=typename: is_pattern_token(t, r, s, c))
+    for typename, match_type, reg in TOKEN_REGEX:
+        if match_type == regex.SKIP:
+            func_list.append(lambda s, c, r=reg: is_skip_char(r, s, c))
+        elif match_type == regex.SINGLE_CHAR:
+            func_list.append(lambda s, c, r=reg, t=typename: is_single_char_token(t, r, s, c))
+        elif match_type == regex.PATTERN:
+            func_list.append(lambda s, c, r=reg, t=typename: is_pattern_token(t, r, s, c))
     return func_list
-
-
-class TokenMatchingError(Exception):
-    pass
 
 
 class Lexer:
@@ -90,7 +88,7 @@ class Lexer:
 
     def __init__(self, text):
         """
-        Construct a lexer for the given input string
+        Construct a Lexer instance for the given input string
 
         :param text: program input string
         """
@@ -113,7 +111,7 @@ class Lexer:
         :return: Next Token from string
         """
         if self.index == len(self.text):
-            return Token(token_type.EOF, '')
+            return Token(types.EOF, '')
         for f in self.matching_func_list:
             consumed, token = f(self.text, self.index)
             if consumed > 0:
@@ -155,7 +153,7 @@ class Lexer:
             error_messages.append("\t" + input_str)
             error_messages.append("\t" + index * " " + "^")
         else:
-            token_list.append(tokens.Token(token_type.EOF, ''))
+            token_list.append(Token(types.EOF, ''))
         return token_list, error_messages
 
 

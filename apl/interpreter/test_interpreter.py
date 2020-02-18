@@ -2,10 +2,10 @@ from unittest import TestCase
 from unittest.mock import MagicMock
 import logging as log
 
-from apl.tokens.tokens import Token
+from apl.tokens import Token
 from apl.tokens.token_type import *
 from apl.parser import parser
-from apl.parser import ast
+from apl.ast import ast
 from apl.interpreter import interpreter
 
 

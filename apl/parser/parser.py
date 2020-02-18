@@ -1,12 +1,7 @@
-from . import ast
-from apl.tokens import token_type
+from apl.ast import ast
+from apl.tokens import types
 
-
-class ParsingError(Exception):
-    """
-    Exception indicating an error during the parsing of the code
-    """
-    pass
+from apl.parser.exceptions import SyntaxParseError
 
 
 class Parser:
@@ -29,7 +24,7 @@ class Parser:
         :return: None
         :raise ParsingError
         """
-        raise ParsingError('Syntax error: expecting {} and found {} {}'.format(
+        raise SyntaxParseError('Syntax error: expecting {} and found {} {}'.format(
             expected,
             self.current_token.typename,
             self.current_token.value
@@ -48,7 +43,7 @@ class Parser:
         if self.current_token.typename == t_type:
             self.current_token = self.lexer.get_next_token()
         else:
-            self.error(token_type)
+            self.error(t_type)
 
     def factor(self):
         """
@@ -61,19 +56,19 @@ class Parser:
         :raise: ParsingError when token stream was not able to generate a `factor`
         """
         token = self.current_token
-        if token.typename == token_type.NUMBER:
-            self.consume(token_type.NUMBER)
+        if token.typename == types.NUMBER:
+            self.consume(types.NUMBER)
             return ast.Number(token)
-        elif token.typename == token_type.OPEN_PAR:
-            self.consume(token_type.OPEN_PAR)
+        elif token.typename == types.OPEN_PAR:
+            self.consume(types.OPEN_PAR)
             expr_node = self.expr()
-            self.consume(token_type.CLOSING_PAR)
+            self.consume(types.CLOSING_PAR)
             return expr_node
-        elif token.typename == token_type.IDENTIFIER:
-            self.consume(token_type.IDENTIFIER)
+        elif token.typename == types.IDENTIFIER:
+            self.consume(types.IDENTIFIER)
             return ast.VarEval(token)
         else:
-            self.error(token_type.NUMBER)
+            self.error(types.NUMBER)
 
     def term(self):
         """
@@ -86,12 +81,12 @@ class Parser:
         :raise: ParsingError if the token stream does not contains a `term`
         """
         node = self.factor()
-        while self.current_token.typename in (token_type.MULT, token_type.DIV):
+        while self.current_token.typename in (types.MULT, types.DIV):
             operator_token = self.current_token
-            if operator_token.typename == token_type.MULT:
-                self.consume(token_type.MULT)
-            elif operator_token.typename == token_type.DIV:
-                self.consume(token_type.DIV)
+            if operator_token.typename == types.MULT:
+                self.consume(types.MULT)
+            elif operator_token.typename == types.DIV:
+                self.consume(types.DIV)
 
             node = ast.BinaryOperator(operator=operator_token, left=node, right=self.factor())
         return node
@@ -103,12 +98,12 @@ class Parser:
         :return: expr AST node
         """
         node = self.term()
-        while self.current_token.typename in (token_type.PLUS, token_type.MINUS):
+        while self.current_token.typename in (types.PLUS, types.MINUS):
             operator_token = self.current_token
-            if operator_token.typename == token_type.PLUS:
-                self.consume(token_type.PLUS)
-            elif operator_token.typename == token_type.MINUS:
-                self.consume(token_type.MINUS)
+            if operator_token.typename == types.PLUS:
+                self.consume(types.PLUS)
+            elif operator_token.typename == types.MINUS:
+                self.consume(types.MINUS)
 
             node = ast.BinaryOperator(operator=operator_token, left=node, right=self.term())
         return node
@@ -127,14 +122,14 @@ class Parser:
 
         :return:
         """
-        if self.current_token.typename == token_type.WORD_VAR:
-            self.consume(token_type.WORD_VAR)
+        if self.current_token.typename == types.WORD_VAR:
+            self.consume(types.WORD_VAR)
             var_name_token = self.current_token
-            self.consume(token_type.IDENTIFIER)
+            self.consume(types.IDENTIFIER)
             return ast.VarInit(var_name_token)
         else:
             var_name_token = self.current_token
-            self.consume(token_type.IDENTIFIER)
+            self.consume(types.IDENTIFIER)
             return ast.Var(var_name_token)
 
     def assign(self):
@@ -144,7 +139,7 @@ class Parser:
         :return:
         """
         left_op = self.left_op()
-        self.consume(token_type.EQUAL)
+        self.consume(types.EQUAL)
         right_opt = self.right_op()
         return ast.Assignation(left_op, right_opt)
 
@@ -155,7 +150,7 @@ class Parser:
         :return:
         """
         instruction = self.assign()
-        self.consume(token_type.TERMINATOR)
+        self.consume(types.TERMINATOR)
         return instruction
 
     def program(self):
@@ -165,12 +160,12 @@ class Parser:
         :return:
         """
         instructions = []
-        while self.current_token.typename != token_type.EOF:
+        while self.current_token.typename != types.EOF:
             instructions.append(self.instruction())
         return ast.Program(instructions)
 
     def parse(self):
         tree = self.program()
-        if self.current_token.typename != token_type.EOF:
-            self.error(token_type.EOF)
+        if self.current_token.typename != types.EOF:
+            self.error(types.EOF)
         return tree

@@ -1,12 +1,9 @@
-from apl.parser import ast
+from apl.ast.visitors import NodeVisitor
 from apl.tokens import token_type
+from apl.interpreter.exceptions import *
 
 
-class ProgrammingError(Exception):
-    pass
-
-
-class Interpreter(ast.ASTNodeVisitor):
+class Interpreter(NodeVisitor):
 
     symbol_table = {}
 
@@ -33,7 +30,7 @@ class Interpreter(ast.ASTNodeVisitor):
     def visit_var(self, node):
         if node.var_name in self.symbol_table:
             return node.var_name
-        raise ProgrammingError('Can\'t assign value to undeclared \'%s\' variable' % node.var_name)
+        raise UndeclaredVariableError('Can\'t assign value to undeclared \'%s\' variable' % node.var_name)
 
     def visit_var_init(self, node):
         return node.var_name
@@ -42,7 +39,7 @@ class Interpreter(ast.ASTNodeVisitor):
         try:
             return self.symbol_table[node.var_name]
         except KeyError:
-            raise ProgrammingError('Variable %s doesn\'t exist' % node.var_name)
+            raise UndeclaredVariableError('Variable %s doesn\'t exist' % node.var_name)
 
     def visit_assignation(self, node):
         self.symbol_table[self.visit(node.left_op)] = self.visit(node.right_op)

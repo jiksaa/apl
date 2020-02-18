@@ -1,6 +1,11 @@
-from apl.lexer.lexer import Lexer, TokenMatchingError
-from apl.parser.parser import Parser, ParsingError
-from apl.interpreter.interpreter import Interpreter
+from apl.lexer import Lexer
+from apl.lexer.exceptions import LexerError
+
+from apl.parser import Parser
+from apl.parser.exceptions import ParserError
+
+from apl.interpreter import Interpreter
+from apl.interpreter.exceptions import InterpreterError
 
 
 def main():
@@ -21,10 +26,12 @@ def main():
             result = apt_interpreter.interpret()
             print(apt_interpreter.symbol_table)
             print(result)
-        except TokenMatchingError as tk_match_err:
+        except LexerError as tk_match_err:
             print(tk_match_err)
-        except ParsingError as parsing_err:
+        except ParserError as parsing_err:
             print(parsing_err)
+        except InterpreterError as int_err:
+            print(int_err)
         except Exception as ex:
             print(ex)
 
