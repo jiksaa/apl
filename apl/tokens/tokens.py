@@ -24,7 +24,10 @@ TOKEN_REGEX = [
 
 class Token:
     """
-    Represent a token identified by a lexer
+    Represent a token identified by a lexer.
+    Toke instance is defined by:
+        - a typename: string()
+        - a value: string()
     """
     typename = str()
     value = str()

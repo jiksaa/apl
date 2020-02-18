@@ -1,6 +1,6 @@
 from apl.lexer import lexer
 
-import code_test
+from . import code_test
 
 
 token_list, error_msg = lexer.Lexer.tokenize(code_test.CODE)
