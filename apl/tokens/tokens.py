@@ -17,7 +17,7 @@ TOKEN_REGEX = [
     (token_type.TERMINATOR, regex.SINGLE_CHAR, ';'),
     (token_type.WORD_VAR, regex.PATTERN, 'var'),
     (token_type.NUMBER, regex.PATTERN, '[0-9]+(\.[0-9]+)?'),
-    (token_type.IDENTIFIER, regex.PATTERN, '_*[a-zA-Z0-9]*'),
+    (token_type.IDENTIFIER, regex.PATTERN, '[a-zA-Z0-9_]*'),
     (token_type.STRING, regex.PATTERN, '\".*\"'),
 ]
 
